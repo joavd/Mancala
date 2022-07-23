@@ -1,15 +1,14 @@
 var express = require('express');
 var router = express.Router();
 
-// 1 = p1, 0 = p2, made to simplify changing players
-let player1 = true;
-let startingStones, pits, board, bigPit1, bigPit2;
+// 1 = p1, 0 = p2, used to simplify changing players
+let player1, startingStones, pits, board, bigPit1, bigPit2;
 
 router.get('/', function (req, res) {
   // Disable cache to test
-  res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
-  res.header('Pragma', 'no-cache');
-  res.header('Expires', 0);
+  //   res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+  //   res.header('Pragma', 'no-cache');
+  //   res.header('Expires', 0);
 
   pits = req.query.pits;
   startingStones = req.query.stones;
@@ -21,11 +20,6 @@ router.get('/', function (req, res) {
 });
 
 router.get('/play', function (req, res) {
-  // Disable cache to test
-  res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
-  res.header('Pragma', 'no-cache');
-  res.header('Expires', 0);
-
   PlayTurn(req.query.pit);
 
   res.json({ board, player1 });
@@ -36,6 +30,7 @@ function PrepareBoard() {
   board = Array(pits * 2 + 2).fill(startingStones);
   board[bigPit1] = 0;
   board[bigPit2] = 0;
+  player1 = true;
 }
 
 function PlayTurn(pit) {
@@ -46,18 +41,27 @@ function PlayTurn(pit) {
   for (let stonesMoved = 0; stonesMoved < stonesToMove; stonesMoved++) {
     currentPit++;
 
-    // Skips over the big pits of the other player
+    // Checks if it's an opponent's big pits, if not it places the stone
     if (
-      (board[currentPit] === bigPit1 && !player1) ||
-      (board[currentPit] === bigPit2 && player1)
-    )
-      continue;
-
-    board[currentPit]++;
+      !(currentPit === bigPit1 && !player1) &&
+      !(currentPit === bigPit2 && player1)
+    ) {
+      board[currentPit]++;
+    } else {
+      // If it's a big pit compensates a stone that wasn't placed
+      stonesMoved--;
+    }
 
     // If it reaches the end of the board goes back to the beggining
-    if (currentPit === board.length - 1) currentPit = 0;
+    if (currentPit === board.length - 1) currentPit = -1;
   }
+
+  // If it ends in a big pit of the same player it plays again, otherwise it changes player
+  if (
+    !(parseInt(currentPit) === parseInt(bigPit1) && player1) &&
+    !(parseInt(currentPit) === parseInt(bigPit2) && !player1)
+  )
+    player1 = !player1;
 }
 
 module.exports = router;

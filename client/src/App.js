@@ -46,7 +46,7 @@ function App() {
           }}
         >
           {board.map((item, index) => {
-            if (player1 && index < pits)
+            if (index < pits)
               return (
                 <button
                   onClick={() => PlayTurn(index)}
@@ -54,8 +54,8 @@ function App() {
                     width: '100px',
                     height: '100px',
                     position: 'relative',
-                    backgroundColor: '#61dafb',
                   }}
+                  disabled={!player1 || item === 0}
                   key={index}
                 >
                   {item}
@@ -70,8 +70,8 @@ function App() {
                     top: '-50px',
                     position: 'relative',
                   }}
-                  key={index}
                   disabled={true}
+                  key={index}
                 >
                   {item}
                 </button>
@@ -86,8 +86,8 @@ function App() {
                     left: `-${pits * 200 + 200}px`,
                     position: 'relative',
                   }}
-                  key={index}
                   disabled={true}
+                  key={index}
                 >
                   {item}
                 </button>
@@ -95,6 +95,7 @@ function App() {
             } else
               return (
                 <button
+                  onClick={() => PlayTurn(index)}
                   style={{
                     width: '100px',
                     height: '100px',
@@ -102,9 +103,10 @@ function App() {
                     left: `-${index * 100 * 2 - 100 * pits * 2}px`,
                     position: 'relative',
                   }}
+                  disabled={player1 || item === 0}
                   key={index}
                 >
-                  {index}
+                  {item}
                 </button>
               );
           })}

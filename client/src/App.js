@@ -5,17 +5,21 @@ import './App.css';
 function App() {
   const [pits, setPits] = useState();
   const [board, setBoard] = useState([]);
-  const [player1, setPlayer1] = useState(1);
+  const [player1, setPlayer1] = useState(true);
+
+  function GetUrlParam(start, end) {
+    return parseInt(window.location.search.substring(start, end));
+  }
 
   useEffect(() => {
     const callAPI = () => {
-      const pits = parseInt(window.location.search.substring(6, 7));
-      const stones = parseInt(window.location.search.substring(15, 16));
+      const pits = GetUrlParam(6, 7);
+      const stones = GetUrlParam(15, 16);
       setPits(pits);
 
       fetch(`http://localhost:9000/testAPI?pits=${pits}&stones=${stones}`)
         .then((res) => res.json())
-        .then((res) => UpdateBoard(res.board, res.player1));
+        .then(({ board, player1 }) => UpdateBoard(board, player1));
     };
     callAPI();
   }, []);
@@ -23,7 +27,7 @@ function App() {
   function PlayTurn(pit) {
     fetch(`http://localhost:9000/testAPI/play?pit=${pit}`)
       .then((res) => res.json())
-      .then((res) => UpdateBoard(res.board, res.player1));
+      .then(({ board, player1 }) => UpdateBoard(board, player1));
   }
 
   function UpdateBoard(updatedBoard, currentPlayer) {
@@ -54,6 +58,7 @@ function App() {
                     width: '100px',
                     height: '100px',
                     position: 'relative',
+                    color: '#61dafb',
                   }}
                   disabled={!player1 || item === 0}
                   key={index}
@@ -69,6 +74,7 @@ function App() {
                     height: '200px',
                     top: '-50px',
                     position: 'relative',
+                    color: '#61dafb',
                   }}
                   disabled={true}
                   key={index}
@@ -85,6 +91,7 @@ function App() {
                     top: '-150px',
                     left: `-${pits * 200 + 200}px`,
                     position: 'relative',
+                    color: '#FAAC61',
                   }}
                   disabled={true}
                   key={index}
@@ -102,6 +109,7 @@ function App() {
                     top: `-200px`,
                     left: `-${index * 100 * 2 - 100 * pits * 2}px`,
                     position: 'relative',
+                    color: '#FAAC61',
                   }}
                   disabled={player1 || item === 0}
                   key={index}

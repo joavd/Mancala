@@ -41,19 +41,18 @@ function PlayTurn(pit) {
   for (let stonesMoved = 0; stonesMoved < stonesToMove; stonesMoved++) {
     currentPit++;
 
-    // Checks if it's an opponent's big pits, if not it places the stone
+    // Checks if it's an opponent's big pits, if yes it compensates the stone unplaces, if not it places the stone
     if (
-      !(currentPit === bigPit1 && !player1) &&
-      !(currentPit === bigPit2 && player1)
-    ) {
-      board[currentPit]++;
-    } else {
-      // If it's a big pit compensates a stone that wasn't placed
+      (parseInt(currentPit) === parseInt(bigPit1) && !player1) ||
+      (parseInt(currentPit) === parseInt(bigPit2) && player1)
+    )
       stonesMoved--;
-    }
+    else board[currentPit]++;
 
-    // If it reaches the end of the board goes back to the beggining
-    if (currentPit === board.length - 1) currentPit = -1;
+    // If it reaches the end of the board goes back to the beggining, unless it doesn't have stones to play
+    const hasReachedTheEnd = currentPit === board.length - 1;
+    const hasStonesLeftToPlay = !(stonesMoved === stonesToMove - 1);
+    if (hasReachedTheEnd && hasStonesLeftToPlay) currentPit = -1;
   }
 
   // If it ends in a big pit of the same player it plays again, otherwise it changes player

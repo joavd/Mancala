@@ -6,6 +6,7 @@ function App() {
   const [pits, setPits] = useState();
   const [board, setBoard] = useState([]);
   const [player1, setPlayer1] = useState(true);
+  const [end, setEnd] = useState(false);
 
   function GetUrlParam(start, end) {
     return parseInt(window.location.search.substring(start, end));
@@ -27,19 +28,25 @@ function App() {
   function PlayTurn(pit) {
     fetch(`http://localhost:9000/testAPI/play?pit=${pit}`)
       .then((res) => res.json())
-      .then(({ board, player1 }) => UpdateBoard(board, player1));
+      .then(({ board, player1, hasEnded }) =>
+        UpdateBoard(board, player1, hasEnded)
+      );
   }
 
-  function UpdateBoard(updatedBoard, currentPlayer) {
+  function UpdateBoard(updatedBoard, currentPlayer, hasEnded = false) {
     setBoard(updatedBoard);
     setPlayer1(currentPlayer);
+    setEnd(hasEnded);
   }
 
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <p className="App-intro">{player1 ? 'Player 1' : 'Player 2'}</p>
+        <p className="App-intro">
+          {player1 ? 'Player 1' : 'Player 2'}
+          {end ? ' wins!' : ' turn'}
+        </p>
 
         <div
           style={{
@@ -52,12 +59,12 @@ function App() {
           {board.map((item, index) => {
             if (index < pits)
               return (
+                // Player 1 pits
                 <button
                   onClick={() => PlayTurn(index)}
                   style={{
                     width: '100px',
                     height: '100px',
-                    position: 'relative',
                     color: '#61dafb',
                   }}
                   disabled={!player1 || item === 0}
@@ -68,6 +75,7 @@ function App() {
               );
             else if (index === pits) {
               return (
+                // Player 1 big pit
                 <button
                   style={{
                     width: '100px',
@@ -84,6 +92,7 @@ function App() {
               );
             } else if (index === pits * 2 + 1) {
               return (
+                // Player 2 big pit
                 <button
                   style={{
                     width: '100px',
@@ -101,6 +110,7 @@ function App() {
               );
             } else
               return (
+                // Player 2 pits
                 <button
                   onClick={() => PlayTurn(index)}
                   style={{

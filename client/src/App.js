@@ -28,15 +28,15 @@ function App() {
   function PlayTurn(pit) {
     fetch(`http://localhost:9000/testAPI/play?pit=${pit}`)
       .then((res) => res.json())
-      .then(({ board, player1, hasEnded }) =>
-        UpdateBoard(board, player1, hasEnded)
+      .then(({ board, player1, gameEnded }) =>
+        UpdateBoard(board, player1, gameEnded)
       );
   }
 
-  function UpdateBoard(updatedBoard, currentPlayer, hasEnded = false) {
+  function UpdateBoard(updatedBoard, currentPlayer, gameEnded = false) {
     setBoard(updatedBoard);
     setPlayer1(currentPlayer);
-    setEnd(hasEnded);
+    setEnd(gameEnded);
   }
 
   return (
@@ -44,8 +44,8 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p className="App-intro">
-          {player1 ? 'Player 1' : 'Player 2'}
-          {end ? ' wins!' : ' turn'}
+          {end ? ' Game ended - ' : 'Current turn - '}
+          {player1 === undefined ? 'Tie' : player1 ? 'Player 1' : 'Player 2'}
         </p>
 
         <div

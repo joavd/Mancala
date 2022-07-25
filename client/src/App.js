@@ -18,7 +18,7 @@ function App() {
       const stones = GetUrlParam(15, 16);
       setPits(pits);
 
-      fetch(`http://localhost:9000/testAPI?pits=${pits}&stones=${stones}`)
+      fetch(`http://localhost:9000/mancala?pits=${pits}&stones=${stones}`)
         .then((res) => res.json())
         .then(({ board, player1 }) => UpdateBoard(board, player1));
     };
@@ -26,7 +26,7 @@ function App() {
   }, []);
 
   function PlayTurn(pit) {
-    fetch(`http://localhost:9000/testAPI/play?pit=${pit}`)
+    fetch(`http://localhost:9000/mancala/play?pit=${pit}`)
       .then((res) => res.json())
       .then(({ board, player1, gameEnded }) =>
         UpdateBoard(board, player1, gameEnded)

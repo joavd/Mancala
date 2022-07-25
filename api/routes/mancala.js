@@ -40,12 +40,13 @@ function PlayTurn(pit) {
   let currentPit = pit;
   board[currentPit] = 0;
 
+  // Places the amount of stones picked across the board
   for (let stonesMoved = 0; stonesMoved < stonesToMove; stonesMoved++) {
     currentPit++;
     const currentPitIsEmpty = board[currentPit] === 0;
     let hasStonesLeftToPlay;
 
-    // Checks if it's an opponent's big pit, if yes it compensates the stone unplaced
+    // Checks if it's an opponent's big pit, in that case it skips it, and compensates the stone unplaced
     if (
       (currentPit === bigPit1 && !player1) ||
       (currentPit === bigPit2 && player1)
@@ -104,6 +105,7 @@ function CheckBoardState() {
   for (let player2Pit = bigPit1 + 1; player2Pit < bigPit2; player2Pit++)
     player2PitsScore += board[player2Pit];
 
+  // Checks if any of the board rows are all empty, and if so adds it to the the respective Big pit, and declares the winner
   if (player1PitsScore === 0 || player2PitsScore === 0) {
     player1PitsScore === 0
       ? (board[bigPit2] += player2PitsScore)
@@ -119,7 +121,7 @@ function CheckBoardState() {
         : board[bigPit1] < board[bigPit2]
         ? false
         : undefined;
-    hasEnded = true;
+    gameEnded = true;
   }
 }
 
